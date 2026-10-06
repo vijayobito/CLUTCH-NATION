@@ -1,0 +1,2905 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>OBITO — CLUTCH NATION</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ff2a5f;
+      --primary-glow: rgba(255, 42, 95, 0.45);
+      --water-glass-bg: rgba(255, 255, 255, 0.05);
+      --water-glass-border: rgba(255, 255, 255, 0.22);
+      --water-glass-highlight: rgba(255, 255, 255, 0.45);
+      --water-glass-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.37);
+      --water-glass-inset: inset 0 1px 1px 0 rgba(255, 255, 255, 0.35), inset 0 -1px 2px 0 rgba(0, 0, 0, 0.4);
+      --text-main: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.72);
+      --text-dim: rgba(255, 255, 255, 0.45);
+      --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #030305;
+      color: var(--text-main);
+      font-family: var(--font-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Background Video: Kept crystal clear & dynamic */
+    #bg {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -10;
+      filter: brightness(0.68) contrast(1.05) saturate(1.15);
+      pointer-events: none;
+    }
+
+    /* Subtle Vignette to enhance text contrast without obscuring video */
+    #veil {
+      position: fixed;
+      inset: 0;
+      z-index: -9;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255, 42, 95, 0.12), transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.55) 100%);
+      pointer-events: none;
+    }
+
+    /* =========================================================
+       CUSTOM LIQUID WATER CURSOR & WATER WAYS SYSTEM (RED THEME)
+       ========================================================= */
+    @media (hover: hover) and (pointer: fine) {
+      body, a, button, input, select, textarea, [role="button"], .social-btn, .action-btn, .discord-btn, .track-bar, .enter-box, .glass-card {
+        cursor: none !important;
+      }
+    }
+
+    /* Water Ways Surface Simulation Canvas */
+    #rippleCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 99990;
+      pointer-events: none;
+      opacity: 1;
+    }
+
+    /* Sleek Glowing Red Core Water Bead */
+    #cursorDot {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 5px;
+      background: #ffffff;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 100000;
+      transform: translate(-50%, -50%);
+      box-shadow:
+        0 0 6px #ffffff,
+        0 0 12px #ff2a5f,
+        0 0 18px rgba(255, 42, 95, 0.85);
+      transition: width 0.18s cubic-bezier(0.18, 0.89, 0.32, 1.28),
+                  height 0.18s cubic-bezier(0.18, 0.89, 0.32, 1.28),
+                  opacity 0.2s ease;
+      opacity: 0;
+    }
+
+    /* Compact Crimson Water Ripple Ring */
+    #cursorRing {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      border: 1.2px solid rgba(255, 42, 95, 0.7);
+      background: radial-gradient(circle, rgba(255, 42, 95, 0.16) 0%, rgba(255, 42, 95, 0.04) 55%, transparent 75%);
+      box-shadow:
+        0 0 10px rgba(255, 42, 95, 0.45),
+        inset 0 0 6px rgba(255, 42, 95, 0.25);
+      backdrop-filter: blur(1.5px);
+      -webkit-backdrop-filter: blur(1.5px);
+      transition: width 0.22s cubic-bezier(0.19, 1, 0.22, 1),
+                  height 0.22s cubic-bezier(0.19, 1, 0.22, 1),
+                  border-color 0.2s ease,
+                  background 0.2s ease,
+                  box-shadow 0.2s ease,
+                  opacity 0.2s ease,
+                  transform 0.1s ease;
+      opacity: 0;
+    }
+
+    #cursorRing.hovering {
+      width: 32px;
+      height: 32px;
+      border-color: #ff2a5f;
+      background: radial-gradient(circle, rgba(255, 42, 95, 0.32) 0%, rgba(255, 42, 95, 0.12) 60%, transparent 80%);
+      box-shadow:
+        0 0 16px rgba(255, 42, 95, 0.9),
+        inset 0 0 8px rgba(255, 42, 95, 0.5);
+    }
+
+    #cursorRing.clicking {
+      transform: translate(-50%, -50%) scale(0.65);
+      border-color: #ffffff;
+      box-shadow: 0 0 14px #ffffff, 0 0 24px #ff2a5f;
+    }
+
+    /* Click to enter overlay: Frosted Water Gateway */
+    #entry {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(8, 9, 14, 0.35);
+      backdrop-filter: blur(28px) saturate(160%);
+      -webkit-backdrop-filter: blur(28px) saturate(160%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+    }
+
+    #entry.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .enter-box {
+      text-align: center;
+      padding: 42px 48px;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--water-glass-border);
+      box-shadow: var(--water-glass-shadow), var(--water-glass-inset);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .enter-box:hover {
+      transform: translateY(-4px) scale(1.02);
+      border-color: var(--water-glass-highlight);
+    }
+
+    .enter-avatar-wrapper {
+      position: relative;
+      width: 86px;
+      height: 86px;
+      margin: 0 auto 18px;
+    }
+
+    .enter-avatar-wrapper img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .pulse-ring {
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 2px solid var(--primary);
+      opacity: 0.8;
+      animation: waterPulse 2.4s infinite cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    @keyframes waterPulse {
+      0% {
+        transform: scale(0.92);
+        opacity: 0.9;
+      }
+
+      100% {
+        transform: scale(1.4);
+        opacity: 0;
+      }
+    }
+
+    .enter-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: #fff;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .enter-subtitle {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      color: var(--primary);
+      letter-spacing: 2px;
+      margin-top: 6px;
+      display: block;
+    }
+
+    /* Page Container */
+    .container {
+      width: min(560px, 92%);
+      margin: 0 auto;
+      padding: 65px 0 90px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    .avatar-container {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+
+    .main-avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      object-fit: cover;
+      padding: 4px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 42, 95, 0.4), rgba(255, 255, 255, 0.1));
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 25px rgba(255, 42, 95, 0.25);
+      backdrop-filter: blur(10px);
+    }
+
+    .live-badge {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      width: 16px;
+      height: 16px;
+      background: #00ff88;
+      border: 3px solid rgba(0, 0, 0, 0.7);
+      border-radius: 50%;
+      box-shadow: 0 0 10px #00ff88;
+    }
+
+    .hero-name-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .hero-name {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #fff;
+      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.5);
+    }
+
+    .verified-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      background: var(--primary);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--primary-glow);
+    }
+
+    .verified-icon svg {
+      width: 11px;
+      height: 11px;
+      fill: #fff;
+    }
+
+    .meta-stats {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .meta-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.07);
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--water-glass-inset);
+    }
+
+    .meta-tag svg {
+      width: 12px;
+      height: 12px;
+      stroke: var(--primary);
+    }
+
+    /* Social Buttons */
+    .socials {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .social-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--water-glass-border);
+      box-shadow: var(--water-glass-inset);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      text-decoration: none;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .social-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+      transition: transform 0.2s ease;
+    }
+
+    .social-btn:hover {
+      background: rgba(255, 42, 95, 0.2);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-3px) scale(1.06);
+      box-shadow: 0 8px 24px rgba(255, 42, 95, 0.35), var(--water-glass-inset);
+    }
+
+    /* Pure Liquid Water-Glass Card */
+    .glass-card {
+      position: relative;
+      background: var(--water-glass-bg);
+      border: 1px solid var(--water-glass-border);
+      border-radius: 20px;
+      padding: 20px;
+      backdrop-filter: blur(24px) saturate(170%);
+      -webkit-backdrop-filter: blur(24px) saturate(170%);
+      box-shadow: var(--water-glass-shadow), var(--water-glass-inset);
+      margin-bottom: 20px;
+      overflow: hidden;
+      transition: border-color 0.3s ease, transform 0.25s ease, box-shadow 0.3s ease;
+    }
+
+    /* Water Droplet Light Sheen */
+    .glass-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -80%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+      transform: skewX(-25deg);
+      transition: left 0.8s ease;
+      pointer-events: none;
+    }
+
+    .glass-card:hover::before {
+      left: 130%;
+    }
+
+    .glass-card:hover {
+      border-color: var(--water-glass-highlight);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45), var(--water-glass-inset);
+      transform: translateY(-2px);
+    }
+
+    /* Interactive Water Audio Player */
+    .music-player {
+      padding: 18px 20px;
+    }
+
+    .music-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .music-thumb-wrap {
+      position: relative;
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .music-thumb {
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .equalizer {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .playing .equalizer {
+      opacity: 1;
+    }
+
+    .eq-bar {
+      width: 3px;
+      height: 14px;
+      background: var(--primary);
+      border-radius: 2px;
+      animation: eqWave 1s infinite alternate ease-in-out;
+    }
+
+    .eq-bar:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .eq-bar:nth-child(2) {
+      animation-delay: 0.35s;
+    }
+
+    .eq-bar:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+
+    @keyframes eqWave {
+      0% {
+        height: 4px;
+      }
+
+      100% {
+        height: 20px;
+      }
+    }
+
+    .music-meta {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .music-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .music-artist {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .player-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ctrl-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: var(--water-glass-inset);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(8px);
+    }
+
+    .ctrl-btn:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      transform: scale(1.08);
+      box-shadow: 0 0 16px var(--primary-glow);
+    }
+
+    .ctrl-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    .progress-area {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .time-num {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      min-width: 32px;
+    }
+
+    .bar-rail {
+      flex: 1;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ff2a5f, #ff6b8b);
+      border-radius: 10px;
+      box-shadow: 0 0 10px var(--primary);
+      transition: width 0.1s linear;
+    }
+
+    /* Mini Game: CN Runner */
+    .game-card {
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .game-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .game-meta-item {
+      text-align: center;
+    }
+
+    .game-label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .game-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    #gameDashStatus {
+      color: #00f0ff;
+      font-size: 13px;
+    }
+
+    .game-arena {
+      position: relative;
+      width: 100%;
+      height: 260px;
+      border-radius: 14px;
+      background: radial-gradient(circle at 50% 20%, rgba(20, 24, 38, 0.95), rgba(7, 8, 12, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+      box-shadow: inset 0 2px 20px rgba(0, 0, 0, 0.8), 0 8px 32px rgba(0, 0, 0, 0.4);
+      user-select: none;
+    }
+
+    #gameCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: pointer;
+    }
+
+    .game-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(8, 9, 14, 0.86);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 10;
+      padding: 20px;
+      text-align: center;
+      transition: opacity 0.3s ease;
+    }
+
+    .game-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    .game-overlay-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #fff;
+      text-shadow: 0 0 18px rgba(255, 42, 95, 0.7);
+      margin-bottom: 6px;
+    }
+
+    .game-overlay-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      max-width: 320px;
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .game-result-rank {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--primary);
+      background: rgba(255, 42, 95, 0.16);
+      border: 1px solid var(--primary);
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      box-shadow: 0 0 14px var(--primary-glow);
+    }
+
+    .game-stats-row {
+      display: flex;
+      gap: 16px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+
+    .game-stats-row b {
+      color: #fff;
+    }
+
+    .game-start-btn {
+      font-family: var(--font-main);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #fff;
+      background: var(--primary);
+      border: none;
+      border-radius: 12px;
+      padding: 11px 28px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px var(--primary-glow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .game-start-btn:hover {
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 6px 26px rgba(255, 42, 95, 0.7);
+    }
+
+    /* Touch & Click Action Controls Bar */
+    .game-controls-bar {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .game-act-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 8px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: var(--water-glass-inset);
+      color: #fff;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+      transition: all 0.15s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-act-btn:hover,
+    .game-act-btn:active {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .game-act-btn.active {
+      background: rgba(255, 42, 95, 0.25);
+      border-color: var(--primary);
+      box-shadow: 0 0 16px var(--primary-glow);
+    }
+
+    .game-act-btn .act-icon {
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .game-act-btn .act-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+
+    .game-act-btn .act-key {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    .dash-meter-bg {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      width: 100%;
+      background: linear-gradient(90deg, #00f0ff, #ff2a5f);
+      box-shadow: 0 0 8px #00f0ff;
+      transition: width 0.1s linear;
+    }
+
+    /* Section Header Separator */
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      color: var(--text-muted);
+      margin: 30px 0 14px;
+    }
+
+    .section-label::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.25), transparent);
+    }
+
+    /* Featured Project Card */
+    .project-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+      color: inherit;
+      padding: 18px 20px;
+    }
+
+    .project-details b {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      transition: color 0.2s ease;
+    }
+
+    .project-details p {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .project-card:hover .project-details b {
+      color: var(--primary);
+    }
+
+    .arrow-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: var(--water-glass-inset);
+      color: #fff;
+      transition: all 0.2s ease;
+    }
+
+    .project-card:hover .arrow-icon {
+      background: var(--primary);
+      border-color: var(--primary);
+      transform: translateX(4px);
+      box-shadow: 0 0 16px var(--primary-glow);
+    }
+
+    /* About Section */
+    .about-box {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .pill {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      padding: 4px 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: var(--water-glass-inset);
+      border-radius: 8px;
+      color: #fff;
+    }
+
+    /* Discord Presence */
+    .discord-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      padding: 16px 20px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .discord-user {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .discord-avatar-wrap {
+      position: relative;
+    }
+
+    .discord-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .status-dot {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 12px;
+      height: 12px;
+      background: #00ff88;
+      border: 2px solid rgba(0, 0, 0, 0.6);
+      border-radius: 50%;
+      box-shadow: 0 0 6px #00ff88;
+    }
+
+    .discord-names b {
+      font-size: 13px;
+      color: #fff;
+      display: block;
+    }
+
+    .discord-names span {
+      font-size: 11px;
+      color: #00ff88;
+    }
+
+    .copy-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: var(--water-glass-inset);
+      padding: 6px 12px;
+      border-radius: 10px;
+      color: #fff;
+      transition: all 0.2s ease;
+    }
+
+    .discord-card:hover .copy-badge {
+      border-color: var(--primary);
+      background: var(--primary-glow);
+    }
+
+    /* Clock */
+    .clock-widget {
+      text-align: center;
+      padding: 24px;
+      margin: 32px 0 16px;
+    }
+
+    .clock-time {
+      font-family: var(--font-mono);
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #fff;
+      text-shadow: 0 2px 18px rgba(255, 255, 255, 0.25);
+    }
+
+    .clock-zone {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--text-dim);
+      margin-top: 6px;
+      display: block;
+    }
+
+    footer {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      padding-bottom: 20px;
+    }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 26px;
+      left: 50%;
+      transform: translateX(-50%) translateY(70px);
+      background: rgba(15, 16, 22, 0.85);
+      border: 1px solid var(--primary);
+      backdrop-filter: blur(16px);
+      padding: 10px 22px;
+      border-radius: 30px;
+      font-size: 12px;
+      color: #fff;
+      font-weight: 500;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    #toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    @media(max-width: 600px) {
+      .container {
+        padding-top: 45px;
+      }
+
+      .hero-name {
+        font-size: 28px;
+      }
+
+      .enter-box {
+        padding: 32px 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- High-visibility background video -->
+  <video id="bg" autoplay muted loop playsinline preload="auto">
+    <source src="assets/background.mp4" type="video/mp4">
+  </video>
+  <div id="veil"></div>
+  <canvas id="rippleCanvas"></canvas>
+  <div id="cursorDot"></div>
+  <div id="cursorRing"></div>
+
+  <!-- Water Glass Gate -->
+  <div id="entry">
+    <div class="enter-box" id="enter">
+      <div class="enter-avatar-wrapper">
+        <div class="pulse-ring"></div>
+        <img src="assets/avatar.png" alt="OBITO">
+      </div>
+      <div class="enter-title">Click to Enter</div>
+      <span class="enter-subtitle">CLUTCH NATION</span>
+    </div>
+  </div>
+
+  <main class="container">
+    <!-- Profile Header -->
+    <section class="hero">
+      <div class="avatar-container">
+        <img class="main-avatar" src="assets/avatar.png" alt="OBITO">
+        <div class="live-badge" title="Online"></div>
+      </div>
+
+      <div class="hero-name-row">
+        <h1 class="hero-name">OBITO</h1>
+        <span class="verified-icon" title="Verified Member">
+          <svg viewBox="0 0 24 24">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+          </svg>
+        </span>
+      </div>
+
+      <div class="meta-stats">
+        <div class="meta-tag">
+          <span>UID</span>
+          <strong style="color:#fff;">421,998</strong>
+        </div>
+        <div class="meta-tag" title="Role">
+          <svg fill="currentColor" viewBox="0 0 24 24" style="width:13px;height:13px;stroke:none;">
+            <path
+              d="M21.58 13.91l-1.37-6.19A3.8 3.8 0 0 0 16.48 4.7H7.52a3.8 3.8 0 0 0-3.73 3.02L2.42 13.91a4.2 4.2 0 0 0 2.45 4.76l2.36 1.05a2.5 2.5 0 0 0 3.25-1.22L11 17h2l.52 1.5a2.5 2.5 0 0 0 3.25 1.22l2.36-1.05a4.2 4.2 0 0 0 2.45-4.76zM8 11.5H6.5V13H5.5v-1.5H4v-1h1.5V9h1v1.5H8v1zm7.5 1.5a1 1 0 1 1 1-1 1 1 0 0 1-1 1zm2-2a1 1 0 1 1 1-1 1 1 0 0 1-1 1z" />
+          </svg>
+          <span style="color:#fff; font-weight:700;">PC Gamer</span>
+        </div>
+        <div class="meta-tag">
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          <span id="views">1,245</span>
+        </div>
+        <div class="meta-tag">
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span>India (Tamil Nadu)</span>
+        </div>
+      </div>
+
+      <!-- Social Link Icons -->
+      <nav class="socials">
+        <a href="https://discord.gg/eA8wJ258yV" target="_blank" class="social-btn" aria-label="Discord">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+          </svg>
+        </a>
+        <a href="https://github.com/vijayobito" target="_blank" class="social-btn" aria-label="GitHub">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z" />
+          </svg>
+        </a>
+        <a href="https://youtube.com/@clutchnationyt?si=MM9bpKP0LAG-Xgu2" target="_blank" class="social-btn"
+          aria-label="YouTube">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+          </svg>
+        </a>
+        <a href="https://instagram.com/" target="_blank" class="social-btn" aria-label="Instagram">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+          </svg>
+        </a>
+        <a href="https://t.me/clutchnationmain" target="_blank" class="social-btn" aria-label="Telegram">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="m20.665 3.717-17.73 6.837c-1.21.486-1.203 1.161-.222 1.462l4.552 1.42 10.532-6.645c.498-.303.953-.14.579.192l-8.533 7.701h-.002l-.002.001-.314 4.692c.46 0 .663-.211.921-.46l2.211-2.15 4.599 3.397c.848.467 1.457.227 1.668-.785l3.019-14.228c.309-1.239-.473-1.8-1.282-1.434z" />
+          </svg>
+        </a>
+      </nav>
+    </section>
+
+    <!-- Water Glass Audio Player -->
+    <div class="glass-card music-player" id="playerWrap">
+      <div class="music-header">
+        <div class="music-thumb-wrap">
+          <img class="music-thumb" src="assets/avatar.png" alt="Cover" id="musicThumb">
+          <div class="equalizer">
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+          </div>
+        </div>
+        <div class="music-meta">
+          <div class="music-title" id="musicTitle">CLUTCH NATION</div>
+          <div class="music-artist" id="musicArtist">Original Soundtrack</div>
+        </div>
+        <div class="player-controls">
+          <button class="ctrl-btn ctrl-play" id="play" title="Play/Pause" aria-label="Play/Pause">
+            <svg id="playIcon" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </button>
+          <button class="ctrl-btn" id="mute" title="Mute/Unmute" aria-label="Mute/Unmute">
+            <svg id="volumeIcon" viewBox="0 0 24 24">
+              <path
+                d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="progress-area">
+        <span class="time-num" id="cur">0:00</span>
+        <div class="bar-rail" id="bar">
+          <div class="bar-fill" id="fill"></div>
+        </div>
+        <span class="time-num" id="dur">0:00</span>
+      </div>
+    </div>
+
+    <!-- Featured Project -->
+    <div class="section-label">Featured Project</div>
+    <a class="glass-card project-card" href="https://github.com/vijayobito" target="_blank">
+      <div class="project-details">
+        <b>CLUTCH NATION</b>
+        <p>Gaming • Custom Tools • Web Projects</p>
+      </div>
+      <div class="arrow-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 17l9.2-9.2M17 17V8H8" />
+        </svg>
+      </div>
+    </a>
+
+    <!-- About Me -->
+    <div class="section-label">About Me</div>
+    <div class="glass-card about-box">
+      Competitive PC gamer & developer crafting high-performance tools, scripts, and responsive web applications with a
+      distinct competitive edge. Always clutching, always building.
+      <div class="tags-row">
+        <span class="pill">#PCGamer</span>
+        <span class="pill">#Competitive</span>
+        <span class="pill">#Developer</span>
+        <span class="pill">#FullStack</span>
+        <span class="pill">#ClutchNation</span>
+      </div>
+    </div>
+
+    <!-- Discord Profile -->
+    <div class="section-label">Discord Community</div>
+    <a class="glass-card discord-card" id="discordCard" href="https://discord.gg/eA8wJ258yV" target="_blank"
+      title="Join Discord Community">
+      <div class="discord-user">
+        <div class="discord-avatar-wrap">
+          <img class="discord-avatar" src="assets/avatar.png" alt="Discord">
+          <span class="status-dot"></span>
+        </div>
+        <div class="discord-names">
+          <b>OBITO</b>
+          <span>Online & Active</span>
+        </div>
+      </div>
+      <div class="copy-badge" id="copyBadge">Join Server</div>
+    </a>
+
+    <!-- Mini Game: CN Runner -->
+    <div class="section-label">Mini Game • CN Runner (OBITO Protocol)</div>
+    <div class="glass-card game-card" id="gameCard">
+      <div class="game-header">
+        <div class="game-meta-item">
+          <span class="game-label">Distance</span>
+          <span class="game-val" id="gameDist">0 m</span>
+        </div>
+        <div class="game-meta-item">
+          <span class="game-label">Shield</span>
+          <span class="game-val" id="gameShieldStatus" style="color:#00ff88;">🛡️ ACTIVE</span>
+        </div>
+        <div class="game-meta-item">
+          <span class="game-label">Shards</span>
+          <span class="game-val" id="gameShards">0 💎</span>
+        </div>
+        <div class="game-meta-item">
+          <span class="game-label">Dash</span>
+          <span class="game-val" id="gameDashStatus">READY</span>
+        </div>
+        <div class="game-meta-item">
+          <span class="game-label">Best</span>
+          <span class="game-val" id="gameBest">0 m</span>
+        </div>
+      </div>
+
+      <div class="game-arena" id="gameArena">
+        <canvas id="gameCanvas"></canvas>
+
+        <div class="game-overlay" id="gameOverlay">
+          <div class="game-overlay-title" id="overlayTitle">CN Runner</div>
+          <div class="game-overlay-sub" id="overlaySub">
+            Sprint across cyber rooftops! Jump over ground spikes, slide under flying drones, and supersonic dash
+            through glitch barriers!
+          </div>
+          <div class="game-result-rank" id="gameRank" style="display: none;">RANK: ROOKIE</div>
+          <div class="game-stats-row" id="gameStatsRow" style="display: none;">
+            <span>Distance: <b id="statDist">0m</b></span>
+            <span>Shards: <b id="statGems">0</b></span>
+            <span>Score: <b id="statScore">0</b></span>
+          </div>
+          <button class="game-start-btn" id="gameStartBtn">RUN (SPACE)</button>
+        </div>
+      </div>
+
+      <!-- Interactive Touch/Click Controls -->
+      <div class="game-controls-bar">
+        <button class="game-act-btn" id="btnJump" title="Jump / Double Jump (Space / W / Up)">
+          <span class="act-icon">▲</span>
+          <span class="act-title">JUMP</span>
+          <span class="act-key">SPACE / W</span>
+        </button>
+        <button class="game-act-btn" id="btnSlide" title="Slide / Crouch under hazards (S / Down)">
+          <span class="act-icon">▼</span>
+          <span class="act-title">SLIDE</span>
+          <span class="act-key">S / DOWN</span>
+        </button>
+        <button class="game-act-btn" id="btnDash" title="Supersonic Dash (Shift / D)">
+          <span class="act-icon">⚡</span>
+          <span class="act-title">DASH</span>
+          <span class="act-key">SHIFT / D</span>
+          <div class="dash-meter-bg" id="dashMeterBg"></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Glass Digital Clock -->
+    <div class="clock-widget">
+      <div class="clock-time" id="clock">--:--:--</div>
+      <span class="clock-zone">Asia/Kolkata (IST)</span>
+    </div>
+
+    <footer>
+      CLUTCH NATION &copy; 2026 • ALL RIGHTS RESERVED
+    </footer>
+  </main>
+
+  <div id="toast">Copied Discord Tag to clipboard!</div>
+
+  <audio id="audio" loop preload="auto">
+    <source src="assets/music.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const E = document.getElementById("entry");
+    const A = document.getElementById("audio");
+    const B = document.getElementById("bg");
+    const P = document.getElementById("play");
+    const M = document.getElementById("mute");
+    const F = document.getElementById("fill");
+    const bar = document.getElementById("bar");
+    const cur = document.getElementById("cur");
+    const dur = document.getElementById("dur");
+    const clock = document.getElementById("clock");
+    const views = document.getElementById("views");
+    const playerWrap = document.getElementById("playerWrap");
+    const playIcon = document.getElementById("playIcon");
+    const volumeIcon = document.getElementById("volumeIcon");
+    const discordCard = document.getElementById("discordCard");
+    const toast = document.getElementById("toast");
+
+    let started = false;
+
+    function fmt(s) {
+      s = Math.floor(s || 0);
+      return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+    }
+
+    function updatePlayButton(isPlaying) {
+      if (isPlaying) {
+        playerWrap.classList.add("playing");
+        playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+      } else {
+        playerWrap.classList.remove("playing");
+        playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+      }
+    }
+
+    // Entry trigger
+    async function start() {
+      if (started) return;
+      started = true;
+      E.classList.add("hide");
+      B.play().catch(() => { });
+      A.volume = 0.35;
+      try {
+        await A.play();
+        updatePlayButton(true);
+      } catch (err) {
+        updatePlayButton(false);
+      }
+    }
+    E.onclick = start;
+
+    // Play/Pause
+    P.onclick = (e) => {
+      e.stopPropagation();
+      if (A.paused) {
+        A.play().catch(() => { });
+        updatePlayButton(true);
+      } else {
+        A.pause();
+        updatePlayButton(false);
+      }
+    };
+
+    // Mute/Unmute
+    M.onclick = (e) => {
+      e.stopPropagation();
+      A.muted = !A.muted;
+      if (A.muted) {
+        volumeIcon.innerHTML = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+      } else {
+        volumeIcon.innerHTML = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+      }
+    };
+
+    // Audio Progress & Seek
+    A.ontimeupdate = () => {
+      if (A.duration) {
+        F.style.width = (A.currentTime / A.duration * 100) + "%";
+        cur.textContent = fmt(A.currentTime);
+        dur.textContent = fmt(A.duration);
+      }
+    };
+
+    bar.onclick = (e) => {
+      if (A.duration) {
+        const rect = bar.getBoundingClientRect();
+        A.currentTime = ((e.clientX - rect.left) / rect.width) * A.duration;
+      }
+    };
+
+    // Live Clock: Accurate 12-Hour format (hh:mm:ss AM/PM)
+    function tick() {
+      const d = new Date();
+      clock.textContent = d.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+      });
+    }
+    tick();
+    setInterval(tick, 1000);
+
+    /* =========================================================
+       MINI GAME: CN Runner (OBITO PROTOCOL)
+       Action Platformer: Run • Jump • Double Jump • Slide • Dash
+       ========================================================= */
+    const gCanvas = document.getElementById("gameCanvas");
+    const gCtx = gCanvas ? gCanvas.getContext("2d") : null;
+    const gOverlay = document.getElementById("gameOverlay");
+    const gStartBtn = document.getElementById("gameStartBtn");
+    const gDistEl = document.getElementById("gameDist");
+    const gShardsEl = document.getElementById("gameShards");
+    const gDashStatusEl = document.getElementById("gameDashStatus");
+    const gShieldStatusEl = document.getElementById("gameShieldStatus");
+    const gBestEl = document.getElementById("gameBest");
+    const gRankEl = document.getElementById("gameRank");
+    const gStatsRow = document.getElementById("gameStatsRow");
+    const statDistEl = document.getElementById("statDist");
+    const statGemsEl = document.getElementById("statGems");
+    const statScoreEl = document.getElementById("statScore");
+    const overlayTitle = document.getElementById("overlayTitle");
+    const overlaySub = document.getElementById("overlaySub");
+    const dashMeterBg = document.getElementById("dashMeterBg");
+
+    const btnJump = document.getElementById("btnJump");
+    const btnSlide = document.getElementById("btnSlide");
+    const btnDash = document.getElementById("btnDash");
+
+    let gBestDist = Number(localStorage.getItem("cnRunnerBest") || 0);
+    if (gBestEl) gBestEl.textContent = gBestDist + " m";
+
+    // Web Audio API Synthesizer
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      try {
+        const ctx = getAudioCtx();
+        const t = ctx.currentTime;
+        if (type === "jump") {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(300, t);
+          osc.frequency.exponentialRampToValueAtTime(650, t + 0.12);
+          gain.gain.setValueAtTime(0.08, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.12);
+        } else if (type === "doubleJump") {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(600, t);
+          osc.frequency.exponentialRampToValueAtTime(1100, t + 0.15);
+          gain.gain.setValueAtTime(0.09, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.15);
+        } else if (type === "slide") {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(150, t);
+          osc.frequency.exponentialRampToValueAtTime(80, t + 0.16);
+          gain.gain.setValueAtTime(0.04, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.16);
+        } else if (type === "dash") {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(750, t);
+          osc.frequency.exponentialRampToValueAtTime(170, t + 0.26);
+          gain.gain.setValueAtTime(0.14, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.26);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.26);
+        } else if (type === "shard") {
+          const notes = [659.25, 880, 1318.5];
+          notes.forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(freq, t + idx * 0.04);
+            gain.gain.setValueAtTime(0.06, t + idx * 0.04);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.04 + 0.14);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(t + idx * 0.04);
+            osc.stop(t + idx * 0.04 + 0.14);
+          });
+        } else if (type === "shieldRestore") {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(440, t);
+          osc.frequency.exponentialRampToValueAtTime(880, t + 0.22);
+          gain.gain.setValueAtTime(0.1, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.22);
+        } else if (type === "smash") {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(240, t);
+          osc.frequency.exponentialRampToValueAtTime(50, t + 0.2);
+          gain.gain.setValueAtTime(0.16, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.2);
+        } else if (type === "hit") {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(130, t);
+          osc.frequency.exponentialRampToValueAtTime(35, t + 0.3);
+          gain.gain.setValueAtTime(0.18, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.3);
+        }
+      } catch (e) { }
+    }
+
+    // Canvas Sizing
+    function resizeGameCanvas() {
+      if (!gCanvas) return;
+      const rect = gCanvas.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        gCanvas.width = rect.width;
+        gCanvas.height = rect.height;
+      }
+    }
+    window.addEventListener("resize", resizeGameCanvas);
+
+    // Game Variables
+    let gRunning = false;
+    let gDistance = 0;
+    let gShards = 0;
+    let shardsForShield = 0;
+    // Gentle, smooth starting speed so player has complete control and reaction time
+    let gBaseSpeed = 3.2;
+    let gSpeed = 3.2;
+    let gGroundY = 220;
+    let gScreenShake = 0;
+    let gAnimLoop = null;
+
+    // Player Model with 2-Hit Shield and Floatier Jump Physics
+    const player = {
+      x: 65,
+      y: 0,
+      baseW: 24,
+      baseH: 48,
+      slideW: 40,
+      slideH: 20,
+      w: 24,
+      h: 48,
+      vy: 0,
+      gravity: 0.52,
+      jumpPower: -10.4,
+      doubleJumpPower: -9.2,
+      jumpsLeft: 2,
+      isGrounded: false,
+      isSliding: false,
+      isDashing: false,
+      dashDuration: 0,
+      dashCooldown: 0,
+      dashMaxCooldown: 3.2,
+      hasShield: true,
+      invulnerableTime: 0,
+      spinAngle: 0,
+      animTick: 0,
+      ghosts: []
+    };
+
+    let obstacles = [];
+    let shards = [];
+    let gameParticles = [];
+    let floatingPops = [];
+    let bgBuildings = [];
+
+    function initBgBuildings() {
+      bgBuildings = [];
+      let bx = 0;
+      for (let i = 0; i < 20; i++) {
+        const bw = 40 + Math.random() * 55;
+        const bh = 65 + Math.random() * 90;
+        bgBuildings.push({ x: bx, w: bw, h: bh, windows: Math.floor(Math.random() * 5) + 3 });
+        bx += bw + 8 + Math.random() * 20;
+      }
+    }
+
+    // Controls Logic
+    function doJump() {
+      if (!gRunning) return;
+      if (player.isSliding) {
+        stopSlide();
+      }
+      if (player.jumpsLeft > 0) {
+        if (player.isGrounded) {
+          player.vy = player.jumpPower;
+          player.isGrounded = false;
+          player.jumpsLeft = 1;
+          playSound("jump");
+          spawnJumpParticles(player.x + player.w / 2, player.y + player.h, "#00f0ff");
+        } else {
+          player.vy = player.doubleJumpPower;
+          player.jumpsLeft = 0;
+          player.spinAngle = Math.PI * 2;
+          playSound("doubleJump");
+          spawnJumpParticles(player.x + player.w / 2, player.y + player.h, "#ff2a5f");
+          spawnFloatingPop("DOUBLE JUMP!", player.x + 20, player.y - 10, "#ff2a5f");
+        }
+        if (btnJump) {
+          btnJump.classList.add("active");
+          setTimeout(() => btnJump.classList.remove("active"), 160);
+        }
+      }
+    }
+
+    function startSlide() {
+      if (!gRunning) return;
+      if (!player.isSliding) {
+        player.isSliding = true;
+        player.w = player.slideW;
+        player.h = player.slideH;
+        if (player.isGrounded) {
+          player.y = gGroundY - player.h;
+        }
+        playSound("slide");
+        if (btnSlide) btnSlide.classList.add("active");
+      }
+    }
+
+    function stopSlide() {
+      if (player.isSliding) {
+        player.isSliding = false;
+        player.w = player.baseW;
+        player.h = player.baseH;
+        player.y = gGroundY - player.h;
+        if (btnSlide) btnSlide.classList.remove("active");
+      }
+    }
+
+    function doDash() {
+      if (!gRunning || player.isDashing || player.dashCooldown > 0) return;
+      player.isDashing = true;
+      player.dashDuration = 0.38;
+      player.dashCooldown = player.dashMaxCooldown;
+      gScreenShake = 6;
+      playSound("dash");
+      spawnFloatingPop("DASH!", player.x + 20, player.y - 12, "#00f0ff");
+      if (btnDash) {
+        btnDash.classList.add("active");
+        setTimeout(() => btnDash.classList.remove("active"), 280);
+      }
+    }
+
+    // Particle Spawners
+    function spawnJumpParticles(x, y, color) {
+      for (let i = 0; i < 7; i++) {
+        const angle = Math.PI + (Math.random() - 0.5) * 1.4;
+        const spd = 2 + Math.random() * 2.8;
+        gameParticles.push({
+          x, y,
+          vx: Math.cos(angle) * spd,
+          vy: Math.sin(angle) * spd,
+          radius: 2 + Math.random() * 2,
+          color,
+          alpha: 1,
+          decay: 0.04
+        });
+      }
+    }
+
+    function spawnSparks(x, y) {
+      for (let i = 0; i < 2; i++) {
+        gameParticles.push({
+          x, y,
+          vx: -gSpeed - (Math.random() * 2.5),
+          vy: (Math.random() - 0.8) * 2.5,
+          radius: 1.5 + Math.random() * 1.2,
+          color: Math.random() > 0.4 ? "#ff2a5f" : "#ffd700",
+          alpha: 1,
+          decay: 0.06
+        });
+      }
+    }
+
+    function spawnShatterParticles(x, y, w, h) {
+      for (let i = 0; i < 16; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const spd = 2 + Math.random() * 4.5;
+        gameParticles.push({
+          x: x + Math.random() * w,
+          y: y + Math.random() * h,
+          vx: Math.cos(angle) * spd + 1,
+          vy: Math.sin(angle) * spd,
+          radius: 2 + Math.random() * 2.5,
+          color: Math.random() > 0.5 ? "#ff2a5f" : "#00f0ff",
+          alpha: 1,
+          decay: 0.035
+        });
+      }
+    }
+
+    function spawnFloatingPop(text, x, y, color) {
+      floatingPops.push({
+        text,
+        x, y,
+        vy: -1.1,
+        alpha: 1,
+        color
+      });
+    }
+
+    // Fair, Spacious Obstacle & Collectible Spawner
+    function spawnNextElement() {
+      // Generous gap of 360px - 540px giving player 2.5 to 3.5 seconds of reaction time!
+      const pad = 360 + Math.random() * 180;
+      const spawnX = gCanvas.width + pad;
+      const rand = Math.random();
+
+      if (rand < 0.42) {
+        // Ground Spikes (Jump over)
+        obstacles.push({
+          type: "spike",
+          x: spawnX,
+          y: gGroundY - 24,
+          w: 22,
+          h: 24,
+          color: "#ff2a5f"
+        });
+      } else if (rand < 0.78) {
+        // Flying Drone (Slide under - lots of head clearance)
+        obstacles.push({
+          type: "drone",
+          x: spawnX,
+          y: gGroundY - 68,
+          w: 36,
+          h: 22,
+          color: "#ff2a5f",
+          pulse: 0
+        });
+      } else {
+        // Breakable Glitch Gate (Jump or Dash through)
+        obstacles.push({
+          type: "gate",
+          x: spawnX,
+          y: gGroundY - 54,
+          w: 20,
+          h: 54,
+          color: "#ff0044"
+        });
+      }
+
+      // Energy Shards
+      if (Math.random() > 0.28) {
+        const shardY = Math.random() > 0.5 ? gGroundY - 70 : gGroundY - 28;
+        shards.push({
+          x: spawnX + 85 + Math.random() * 35,
+          y: shardY,
+          size: 8,
+          rot: 0
+        });
+      }
+    }
+
+    function checkCollision(r1, r2) {
+      return (
+        r1.x < r2.x + r2.w &&
+        r1.x + r1.w > r2.x &&
+        r1.y < r2.y + r2.h &&
+        r1.y + r1.h > r2.y
+      );
+    }
+
+    // Start Game with Safe Warm-Up Runway
+    function startRunner() {
+      resizeGameCanvas();
+      gGroundY = gCanvas.height - 38;
+      gRunning = true;
+      gDistance = 0;
+      gShards = 0;
+      shardsForShield = 0;
+      gBaseSpeed = 3.2;
+      gSpeed = 3.2;
+      gScreenShake = 0;
+
+      player.x = 65;
+      player.w = player.baseW;
+      player.h = player.baseH;
+      player.y = gGroundY - player.h;
+      player.vy = 0;
+      player.isGrounded = true;
+      player.isSliding = false;
+      player.isDashing = false;
+      player.dashDuration = 0;
+      player.dashCooldown = 0;
+      player.jumpsLeft = 2;
+      player.hasShield = true;
+      player.invulnerableTime = 0;
+      player.ghosts = [];
+
+      obstacles = [];
+      shards = [];
+      gameParticles = [];
+      floatingPops = [];
+      initBgBuildings();
+
+      // SAFE WARM-UP RUNWAY:
+      // First 700px have NO obstacles so player gets comfortable!
+      // Instead, 3 easy rewarding energy shards spawn first:
+      shards.push({ x: 220, y: gGroundY - 32, size: 8, rot: 0 });
+      shards.push({ x: 380, y: gGroundY - 32, size: 8, rot: 0 });
+      shards.push({ x: 540, y: gGroundY - 54, size: 8, rot: 0 });
+
+      // First gentle ground spike appears far away at 760px (~4.5s reaction time)
+      obstacles.push({ type: "spike", x: 760, y: gGroundY - 24, w: 22, h: 24, color: "#ff2a5f" });
+      shards.push({ x: 840, y: gGroundY - 54, size: 8, rot: 0 });
+
+      if (gOverlay) gOverlay.classList.add("hidden");
+      if (gDistEl) gDistEl.textContent = "0 m";
+      if (gShardsEl) gShardsEl.textContent = "0 💎";
+      if (gDashStatusEl) {
+        gDashStatusEl.textContent = "READY";
+        gDashStatusEl.style.color = "#00f0ff";
+      }
+      if (gShieldStatusEl) {
+        gShieldStatusEl.textContent = "🛡️ ACTIVE";
+        gShieldStatusEl.style.color = "#00ff88";
+      }
+      if (dashMeterBg) dashMeterBg.style.width = "100%";
+
+      if (gAnimLoop) cancelAnimationFrame(gAnimLoop);
+      gAnimLoop = requestAnimationFrame(gameLoop);
+    }
+
+    // Game Over
+    function endRunner() {
+      gRunning = false;
+      if (gAnimLoop) cancelAnimationFrame(gAnimLoop);
+      playSound("hit");
+      gScreenShake = 12;
+
+      const finalDist = Math.floor(gDistance);
+      if (finalDist > gBestDist) {
+        gBestDist = finalDist;
+        localStorage.setItem("cnRunnerBest", gBestDist);
+        if (gBestEl) gBestEl.textContent = gBestDist + " m";
+      }
+
+      const finalScore = finalDist * 10 + gShards * 50;
+      let rank = "RANK: ROOKIE";
+      if (finalDist >= 1500) rank = "RANK: S+ • GOD OF SHADOWS";
+      else if (finalDist >= 1000) rank = "RANK: S • CYBER PHANTOM";
+      else if (finalDist >= 600) rank = "RANK: A • CN Runner";
+      else if (finalDist >= 300) rank = "RANK: B • SHADOW OPERATOR";
+
+      if (overlayTitle) overlayTitle.textContent = "RUN TERMINATED";
+      if (overlaySub) overlaySub.textContent = `Distance: ${finalDist}m • Shards: ${gShards} • Best: ${gBestDist}m`;
+      if (gRankEl) {
+        gRankEl.textContent = rank;
+        gRankEl.style.display = "block";
+      }
+      if (gStatsRow) gStatsRow.style.display = "flex";
+      if (statDistEl) statDistEl.textContent = finalDist + "m";
+      if (statGemsEl) statGemsEl.textContent = gShards;
+      if (statScoreEl) statScoreEl.textContent = finalScore;
+      if (gStartBtn) gStartBtn.textContent = "PLAY AGAIN (SPACE)";
+      if (gOverlay) gOverlay.classList.remove("hidden");
+    }
+
+    // Main Game Update & Render Loop
+    let lastTime = performance.now();
+    function gameLoop(now) {
+      if (!gCtx || !gCanvas) return;
+      const dt = Math.min(0.06, (now - lastTime) / 1000);
+      lastTime = now;
+
+      gGroundY = gCanvas.height - 38;
+
+      // Screen shake decay
+      let shakeX = 0;
+      let shakeY = 0;
+      if (gScreenShake > 0) {
+        shakeX = (Math.random() - 0.5) * gScreenShake;
+        shakeY = (Math.random() - 0.5) * gScreenShake;
+        gScreenShake *= 0.88;
+        if (gScreenShake < 0.3) gScreenShake = 0;
+      }
+
+      // Smooth, gradual speed progression
+      gSpeed = gBaseSpeed + Math.min(3.2, gDistance * 0.0016);
+      const currentSpeed = player.isDashing ? gSpeed * 1.55 : gSpeed;
+
+      // Advance distance
+      gDistance += (currentSpeed * dt * 4.0);
+      if (gDistEl) gDistEl.textContent = Math.floor(gDistance) + " m";
+
+      // Invulnerability timer countdown
+      if (player.invulnerableTime > 0) {
+        player.invulnerableTime = Math.max(0, player.invulnerableTime - dt);
+      }
+
+      // Dash timer & cooldown
+      if (player.isDashing) {
+        player.dashDuration -= dt;
+        if (Math.random() > 0.3) {
+          player.ghosts.push({
+            x: player.x,
+            y: player.y,
+            w: player.w,
+            h: player.h,
+            alpha: 0.65,
+            isSliding: player.isSliding
+          });
+        }
+        if (player.dashDuration <= 0) {
+          player.isDashing = false;
+        }
+      }
+
+      if (player.dashCooldown > 0) {
+        player.dashCooldown = Math.max(0, player.dashCooldown - dt);
+        const pct = Math.max(0, 1 - (player.dashCooldown / player.dashMaxCooldown)) * 100;
+        if (dashMeterBg) dashMeterBg.style.width = pct + "%";
+        if (gDashStatusEl) {
+          if (player.dashCooldown <= 0) {
+            gDashStatusEl.textContent = "READY";
+            gDashStatusEl.style.color = "#00f0ff";
+          } else {
+            gDashStatusEl.textContent = player.dashCooldown.toFixed(1) + "s";
+            gDashStatusEl.style.color = "#ff6b8b";
+          }
+        }
+      }
+
+      // Player Physics
+      if (!player.isGrounded) {
+        player.vy += player.gravity;
+        player.y += player.vy;
+        if (player.spinAngle > 0) {
+          player.spinAngle = Math.max(0, player.spinAngle - 0.32);
+        }
+        if (player.y + player.h >= gGroundY) {
+          player.y = gGroundY - player.h;
+          player.vy = 0;
+          player.isGrounded = true;
+          player.jumpsLeft = 2;
+          player.spinAngle = 0;
+          spawnJumpParticles(player.x + player.w / 2, gGroundY, "rgba(255,255,255,0.4)");
+        }
+      } else {
+        player.y = gGroundY - player.h;
+        if (player.isSliding) {
+          spawnSparks(player.x + 2, gGroundY - 2);
+        }
+      }
+
+      // Spawn next obstacle with fair gap
+      if (obstacles.length === 0 || (gCanvas.width - obstacles[obstacles.length - 1].x) > (260 + Math.random() * 120)) {
+        spawnNextElement();
+      }
+
+      // CLEAR & SHAKE CANVAS
+      gCtx.save();
+      gCtx.translate(shakeX, shakeY);
+      gCtx.clearRect(-10, -10, gCanvas.width + 20, gCanvas.height + 20);
+
+      // 1. BACKGROUND PARALLAX BUILDINGS
+      gCtx.fillStyle = "rgba(16, 20, 32, 0.7)";
+      for (let b of bgBuildings) {
+        b.x -= currentSpeed * 0.22;
+        if (b.x + b.w < 0) {
+          b.x = gCanvas.width + Math.random() * 30;
+        }
+        gCtx.fillRect(b.x, gGroundY - b.h, b.w, b.h);
+        // Neon building windows
+        gCtx.fillStyle = "rgba(0, 240, 255, 0.12)";
+        for (let w = 0; w < b.windows; w++) {
+          gCtx.fillRect(b.x + 6 + (w % 3) * 11, gGroundY - b.h + 10 + Math.floor(w / 3) * 18, 5, 8);
+        }
+        gCtx.fillStyle = "rgba(16, 20, 32, 0.7)";
+      }
+
+      // 2. CYBER HIGHWAY PLATFORM GROUND
+      const groundGrad = gCtx.createLinearGradient(0, gGroundY, 0, gCanvas.height);
+      groundGrad.addColorStop(0, "rgba(255, 42, 95, 0.4)");
+      groundGrad.addColorStop(0.12, "rgba(10, 12, 18, 0.95)");
+      groundGrad.addColorStop(1, "rgba(5, 6, 10, 1)");
+      gCtx.fillStyle = groundGrad;
+      gCtx.fillRect(0, gGroundY, gCanvas.width, gCanvas.height - gGroundY);
+
+      // Neon Track Top Rail
+      gCtx.strokeStyle = "#ff2a5f";
+      gCtx.lineWidth = 2.5;
+      gCtx.shadowColor = "#ff2a5f";
+      gCtx.shadowBlur = 10;
+      gCtx.beginPath();
+      gCtx.moveTo(0, gGroundY);
+      gCtx.lineTo(gCanvas.width, gGroundY);
+      gCtx.stroke();
+      gCtx.shadowBlur = 0;
+
+      // Moving grid lines on ground
+      const gridOffset = (gDistance * 5) % 36;
+      gCtx.strokeStyle = "rgba(0, 240, 255, 0.18)";
+      gCtx.lineWidth = 1;
+      for (let gx = -gridOffset; gx < gCanvas.width; gx += 36) {
+        gCtx.beginPath();
+        gCtx.moveTo(gx, gGroundY);
+        gCtx.lineTo(gx - 20, gCanvas.height);
+        gCtx.stroke();
+      }
+
+      // 3. OBSTACLES UPDATE & DRAW
+      for (let i = 0; i < obstacles.length; i++) {
+        const ob = obstacles[i];
+        ob.x -= currentSpeed;
+
+        if (ob.type === "spike") {
+          // Ground Spikes (Jump over)
+          gCtx.fillStyle = ob.color;
+          gCtx.shadowColor = "#ff2a5f";
+          gCtx.shadowBlur = 8;
+          gCtx.beginPath();
+          gCtx.moveTo(ob.x, ob.y + ob.h);
+          gCtx.lineTo(ob.x + ob.w / 2, ob.y);
+          gCtx.lineTo(ob.x + ob.w, ob.y + ob.h);
+          gCtx.closePath();
+          gCtx.fill();
+          gCtx.shadowBlur = 0;
+        } else if (ob.type === "drone") {
+          // Overhead Drone / Laser (Slide under)
+          ob.pulse = (ob.pulse || 0) + 0.08;
+          const hoverY = ob.y + Math.sin(ob.pulse) * 3;
+
+          // Drone Body
+          gCtx.fillStyle = "#1e2230";
+          gCtx.strokeStyle = "#ff2a5f";
+          gCtx.lineWidth = 1.5;
+          gCtx.fillRect(ob.x, hoverY, ob.w, ob.h);
+          gCtx.strokeRect(ob.x, hoverY, ob.w, ob.h);
+
+          // Red Scanner Eye
+          gCtx.fillStyle = "#ff2a5f";
+          gCtx.shadowColor = "#ff2a5f";
+          gCtx.shadowBlur = 10;
+          gCtx.beginPath();
+          gCtx.arc(ob.x + 8, hoverY + ob.h / 2, 4, 0, Math.PI * 2);
+          gCtx.fill();
+
+          // Laser warning beam
+          gCtx.strokeStyle = "rgba(255, 42, 95, 0.4)";
+          gCtx.lineWidth = 2;
+          gCtx.beginPath();
+          gCtx.moveTo(ob.x + ob.w / 2, hoverY + ob.h);
+          gCtx.lineTo(ob.x + ob.w / 2, gGroundY);
+          gCtx.stroke();
+          gCtx.shadowBlur = 0;
+        } else if (ob.type === "gate") {
+          // Tall Energy Gate (Jump or Dash through)
+          gCtx.fillStyle = "rgba(255, 0, 80, 0.25)";
+          gCtx.strokeStyle = "#ff0055";
+          gCtx.lineWidth = 2;
+          gCtx.shadowColor = "#ff0055";
+          gCtx.shadowBlur = 12;
+          gCtx.fillRect(ob.x, ob.y, ob.w, ob.h);
+          gCtx.strokeRect(ob.x, ob.y, ob.w, ob.h);
+          // Warning stripes
+          gCtx.fillStyle = "#fff";
+          gCtx.fillRect(ob.x + 4, ob.y + 6, ob.w - 8, 3);
+          gCtx.fillRect(ob.x + 4, ob.y + ob.h / 2, ob.w - 8, 3);
+          gCtx.fillRect(ob.x + 4, ob.y + ob.h - 9, ob.w - 8, 3);
+          gCtx.shadowBlur = 0;
+        }
+
+        // Precise, fair collision hitbox
+        let obHitbox;
+        if (ob.type === "spike") {
+          obHitbox = {
+            x: ob.x + 5,
+            y: ob.y + 6,
+            w: ob.w - 10,
+            h: ob.h - 6
+          };
+        } else if (ob.type === "drone") {
+          const hoverY = ob.y + Math.sin(ob.pulse || 0) * 3;
+          obHitbox = {
+            x: ob.x + 4,
+            y: hoverY + 2,
+            w: ob.w - 8,
+            h: ob.h - 4
+          };
+        } else {
+          obHitbox = {
+            x: ob.x + 3,
+            y: ob.y + 3,
+            w: ob.w - 6,
+            h: ob.h - 6
+          };
+        }
+
+        const playerHitbox = {
+          x: player.x + 5,
+          y: player.y + 4,
+          w: player.w - 10,
+          h: player.h - 8
+        };
+
+        if (checkCollision(playerHitbox, obHitbox)) {
+          if (player.isDashing) {
+            // Supersonic Dash smashes obstacle!
+            spawnShatterParticles(ob.x, ob.y, ob.w, ob.h);
+            playSound("smash");
+            gScreenShake = 8;
+            spawnFloatingPop("+100 DASH SMASH!", ob.x, ob.y - 10, "#ffd700");
+            gDistance += 10;
+            obstacles.splice(i, 1);
+            i--;
+            continue;
+          } else if (player.invulnerableTime > 0) {
+            // Currently in i-frames, pass through harmlessly
+            continue;
+          } else if (player.hasShield) {
+            // ENERGY SHIELD ABSORBS DAMAGE!
+            player.hasShield = false;
+            player.invulnerableTime = 1.8; // 1.8 seconds grace
+            shardsForShield = 0;
+            spawnShatterParticles(ob.x, ob.y, ob.w, ob.h);
+            playSound("hit");
+            gScreenShake = 8;
+            spawnFloatingPop("🛡️ SHIELD SAVED!", player.x + 20, player.y - 14, "#00ff88");
+            if (gShieldStatusEl) {
+              gShieldStatusEl.textContent = "🛡️ 0/3 💎";
+              gShieldStatusEl.style.color = "#ff6b8b";
+            }
+            obstacles.splice(i, 1);
+            i--;
+            continue;
+          } else {
+            // Final Crash
+            endRunner();
+            gCtx.restore();
+            return;
+          }
+        }
+
+        // Cull offscreen obstacles
+        if (ob.x + ob.w < -20) {
+          obstacles.splice(i, 1);
+          i--;
+        }
+      }
+
+      // 4. ENERGY SHARDS
+      for (let j = 0; j < shards.length; j++) {
+        const sh = shards[j];
+        sh.x -= currentSpeed;
+        sh.rot += 0.05;
+
+        // Collect check
+        const pCenter = { x: player.x + player.w / 2, y: player.y + player.h / 2 };
+        const dist = Math.hypot(pCenter.x - sh.x, pCenter.y - sh.y);
+
+        if (dist < 30) {
+          gShards++;
+          playSound("shard");
+          spawnFloatingPop("+50", sh.x, sh.y - 12, "#00f0ff");
+          // Shave off dash cooldown
+          player.dashCooldown = Math.max(0, player.dashCooldown - 1.2);
+          if (gShardsEl) gShardsEl.textContent = gShards + " 💎";
+
+          // Shield Recharge System (3 shards = restore shield!)
+          if (!player.hasShield) {
+            shardsForShield++;
+            if (shardsForShield >= 3) {
+              player.hasShield = true;
+              playSound("shieldRestore");
+              spawnFloatingPop("🛡️ SHIELD RESTORED!", player.x + 20, player.y - 16, "#00ff88");
+              if (gShieldStatusEl) {
+                gShieldStatusEl.textContent = "🛡️ ACTIVE";
+                gShieldStatusEl.style.color = "#00ff88";
+              }
+            } else {
+              if (gShieldStatusEl) {
+                gShieldStatusEl.textContent = `🛡️ ${shardsForShield}/3 💎`;
+                gShieldStatusEl.style.color = "#ffaa00";
+              }
+            }
+          }
+
+          shards.splice(j, 1);
+          j--;
+          continue;
+        }
+
+        // Draw glowing diamond shard
+        gCtx.save();
+        gCtx.translate(sh.x, sh.y);
+        gCtx.rotate(sh.rot);
+        gCtx.fillStyle = "#00f0ff";
+        gCtx.shadowColor = "#00f0ff";
+        gCtx.shadowBlur = 10;
+        gCtx.beginPath();
+        gCtx.moveTo(0, -sh.size);
+        gCtx.lineTo(sh.size * 0.75, 0);
+        gCtx.lineTo(0, sh.size);
+        gCtx.lineTo(-sh.size * 0.75, 0);
+        gCtx.closePath();
+        gCtx.fill();
+        gCtx.restore();
+
+        if (sh.x < -30) {
+          shards.splice(j, 1);
+          j--;
+        }
+      }
+
+      // 5. DRAW GHOST SHADOW CLONES (ON DASH)
+      for (let g = 0; g < player.ghosts.length; g++) {
+        const gh = player.ghosts[g];
+        gh.x -= currentSpeed * 0.4;
+        gh.alpha -= 0.05;
+        if (gh.alpha <= 0) {
+          player.ghosts.splice(g, 1);
+          g--;
+          continue;
+        }
+        gCtx.fillStyle = `rgba(0, 240, 255, ${gh.alpha * 0.5})`;
+        gCtx.fillRect(gh.x, gh.y, gh.w, gh.h);
+      }
+
+      // 6. DRAW PLAYER RUNNER (OBITO CYBER NINJA)
+      gCtx.save();
+      gCtx.translate(player.x + player.w / 2, player.y + player.h / 2);
+      if (player.spinAngle > 0) {
+        gCtx.rotate(player.spinAngle);
+      }
+
+      // Invulnerability blink
+      if (player.invulnerableTime > 0) {
+        if (Math.floor(Date.now() / 80) % 2 === 0) {
+          gCtx.globalAlpha = 0.35;
+        }
+      }
+
+      // Active Energy Shield Aura
+      if (player.hasShield) {
+        gCtx.save();
+        gCtx.strokeStyle = "rgba(0, 255, 136, 0.65)";
+        gCtx.lineWidth = 1.8;
+        gCtx.shadowColor = "#00ff88";
+        gCtx.shadowBlur = 10;
+        gCtx.beginPath();
+        gCtx.arc(0, 0, Math.max(player.w, player.h) * 0.62, 0, Math.PI * 2);
+        gCtx.stroke();
+        gCtx.restore();
+      }
+
+      player.animTick += 0.22;
+      const legSwing = Math.sin(player.animTick) * 6;
+
+      if (player.isSliding) {
+        // Sliding Cyber Posture
+        gCtx.fillStyle = player.isDashing ? "#00f0ff" : "#1a1e2a";
+        gCtx.strokeStyle = player.isDashing ? "#fff" : "#ff2a5f";
+        gCtx.lineWidth = 2;
+        gCtx.shadowColor = player.isDashing ? "#00f0ff" : "#ff2a5f";
+        gCtx.shadowBlur = player.isDashing ? 16 : 8;
+
+        gCtx.beginPath();
+        gCtx.roundRect(-player.w / 2, -player.h / 2, player.w, player.h, 5);
+        gCtx.fill();
+        gCtx.stroke();
+
+        // Visor eye
+        gCtx.fillStyle = "#ff2a5f";
+        gCtx.fillRect(player.w / 4, -player.h / 4, 8, 3);
+        gCtx.shadowBlur = 0;
+      } else {
+        // Standing / Running Posture
+        gCtx.fillStyle = player.isDashing ? "#00f0ff" : "#141724";
+        gCtx.strokeStyle = player.isDashing ? "#fff" : "#00f0ff";
+        gCtx.lineWidth = 2;
+        gCtx.shadowColor = player.isDashing ? "#00f0ff" : "#ff2a5f";
+        gCtx.shadowBlur = player.isDashing ? 18 : 6;
+
+        // Torso & Head
+        gCtx.beginPath();
+        gCtx.roundRect(-player.w / 2, -player.h / 2, player.w, player.h - 10, 5);
+        gCtx.fill();
+        gCtx.stroke();
+
+        // OBITO Mask Visor / Eye Streak
+        gCtx.fillStyle = "#ff2a5f";
+        gCtx.fillRect(player.w / 6, -player.h / 2 + 7, 7, 3);
+
+        // Running Legs (when on ground)
+        if (player.isGrounded) {
+          gCtx.strokeStyle = "#fff";
+          gCtx.lineWidth = 2;
+          // Front leg
+          gCtx.beginPath();
+          gCtx.moveTo(-4, player.h / 2 - 10);
+          gCtx.lineTo(-4 + legSwing, player.h / 2);
+          gCtx.stroke();
+          // Back leg
+          gCtx.beginPath();
+          gCtx.moveTo(4, player.h / 2 - 10);
+          gCtx.lineTo(4 - legSwing, player.h / 2);
+          gCtx.stroke();
+        }
+        gCtx.shadowBlur = 0;
+      }
+      gCtx.restore();
+
+      // 7. PARTICLES UPDATE & DRAW
+      for (let p = 0; p < gameParticles.length; p++) {
+        const pt = gameParticles[p];
+        pt.x += pt.vx;
+        pt.y += pt.vy;
+        pt.alpha -= pt.decay;
+        if (pt.alpha <= 0) {
+          gameParticles.splice(p, 1);
+          p--;
+          continue;
+        }
+        gCtx.fillStyle = pt.color;
+        gCtx.globalAlpha = pt.alpha;
+        gCtx.beginPath();
+        gCtx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2);
+        gCtx.fill();
+        gCtx.globalAlpha = 1;
+      }
+
+      // 8. FLOATING TEXTS
+      for (let f = 0; f < floatingPops.length; f++) {
+        const ft = floatingPops[f];
+        ft.y += ft.vy;
+        ft.alpha -= 0.024;
+        if (ft.alpha <= 0) {
+          floatingPops.splice(f, 1);
+          f--;
+          continue;
+        }
+        gCtx.font = "bold 12px 'Space Grotesk', sans-serif";
+        gCtx.fillStyle = ft.color;
+        gCtx.globalAlpha = ft.alpha;
+        gCtx.textAlign = "center";
+        gCtx.fillText(ft.text, ft.x, ft.y);
+        gCtx.globalAlpha = 1;
+      }
+
+      gCtx.restore();
+
+      if (gRunning) {
+        gAnimLoop = requestAnimationFrame(gameLoop);
+      }
+    }
+
+    // Controls Binding: Keyboard
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyW") {
+        e.preventDefault();
+        if (!gRunning) {
+          startRunner();
+        } else {
+          doJump();
+        }
+      } else if (e.code === "ArrowDown" || e.code === "KeyS") {
+        e.preventDefault();
+        startSlide();
+      } else if (e.code === "ShiftLeft" || e.code === "ShiftRight" || e.code === "KeyD" || e.code === "KeyE") {
+        e.preventDefault();
+        doDash();
+      }
+    });
+
+    window.addEventListener("keyup", (e) => {
+      if (e.code === "ArrowDown" || e.code === "KeyS") {
+        stopSlide();
+      }
+    });
+
+    // Controls Binding: Dedicated Screen Buttons
+    if (btnJump) {
+      btnJump.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+        if (!gRunning) startRunner();
+        else doJump();
+      });
+    }
+
+    if (btnSlide) {
+      btnSlide.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+        startSlide();
+      });
+      window.addEventListener("pointerup", () => stopSlide());
+    }
+
+    if (btnDash) {
+      btnDash.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+        doDash();
+      });
+    }
+
+    // Canvas Direct Tap/Click Interaction
+    if (gCanvas) {
+      gCanvas.addEventListener("pointerdown", (e) => {
+        if (!gRunning) {
+          startRunner();
+          return;
+        }
+        const rect = gCanvas.getBoundingClientRect();
+        const clickY = e.clientY - rect.top;
+        if (clickY < rect.height * 0.55) {
+          doJump();
+        } else {
+          startSlide();
+        }
+      });
+
+      gCanvas.addEventListener("pointerup", () => {
+        if (player.isSliding) stopSlide();
+      });
+    }
+
+    // Overlay Start Button
+    if (gStartBtn) {
+      gStartBtn.onclick = (e) => {
+        e.stopPropagation();
+        startRunner();
+      };
+    }
+
+    // Views Counter
+    let viewCount = Number(localStorage.getItem("cnViews") || 1245) + 1;
+    localStorage.setItem("cnViews", viewCount);
+    views.textContent = viewCount.toLocaleString();
+
+    // Copy Discord Tag
+    const copyBadge = document.getElementById("copyBadge");
+    if (copyBadge) {
+      copyBadge.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        navigator.clipboard.writeText("https://discord.gg/eA8wJ258yV").then(() => {
+          toast.textContent = "Copied Discord Invite Link!";
+          toast.classList.add("show");
+          setTimeout(() => toast.classList.remove("show"), 2200);
+        });
+      };
+    }
+
+    /* =========================================================
+       STATE-OF-THE-ART "WATER WAYS" LIQUID CURSOR (RED THEME)
+       - Compact, elegant red fluid wake ribbon
+       - Concentric crimson wake ripples and liquid beads
+       - Sleek micro-scale water cursor
+       ========================================================= */
+    const canvas = document.getElementById("rippleCanvas");
+    const ctx = canvas.getContext("2d");
+    const cursorDot = document.getElementById("cursorDot");
+    const cursorRing = document.getElementById("cursorRing");
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    // Mouse positions & dynamics
+    let mouse = { x: -100, y: -100, targetX: -100, targetY: -100, isVisible: false };
+    let ringPos = { x: -100, y: -100 };
+    let prevMouse = { x: -100, y: -100 };
+    let velocity = { x: 0, y: 0, speed: 0 };
+    let isHovering = false;
+    let isClicking = false;
+
+    // Simulation entities
+    let trail = [];         // Connected stream points ("Water Ways")
+    let ripples = [];       // Concentric water wake rings
+    let droplets = [];      // Floating liquid water beads/droplets
+
+    const MAX_TRAIL_LENGTH = 20;
+    let lastWakeDropTime = 0;
+    let distSinceLastRipple = 0;
+
+    // Track mouse movement
+    window.addEventListener("mousemove", (e) => {
+      mouse.targetX = e.clientX;
+      mouse.targetY = e.clientY;
+
+      if (!mouse.isVisible) {
+        mouse.isVisible = true;
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+        ringPos.x = e.clientX;
+        ringPos.y = e.clientY;
+        prevMouse.x = e.clientX;
+        prevMouse.y = e.clientY;
+        cursorDot.style.opacity = "1";
+        cursorRing.style.opacity = "1";
+      }
+
+      // Check if hovering clickable/interactive element
+      const target = e.target;
+      const interactive = target && target.closest(
+        'a, button, input, [role="button"], .social-btn, .action-btn, .discord-btn, .track-bar, .enter-box, .meta-tag, .game-btn, .glass-card, #play, #mute'
+      );
+      if (interactive && !isHovering) {
+        isHovering = true;
+        cursorRing.classList.add("hovering");
+      } else if (!interactive && isHovering) {
+        isHovering = false;
+        cursorRing.classList.remove("hovering");
+      }
+    });
+
+    window.addEventListener("mousedown", (e) => {
+      isClicking = true;
+      cursorRing.classList.add("clicking");
+      addWaterSplash(e.clientX, e.clientY);
+    });
+
+    window.addEventListener("mouseup", () => {
+      isClicking = false;
+      cursorRing.classList.remove("clicking");
+    });
+
+    document.addEventListener("mouseleave", () => {
+      mouse.isVisible = false;
+      cursorDot.style.opacity = "0";
+      cursorRing.style.opacity = "0";
+    });
+
+    document.addEventListener("mouseenter", () => {
+      if (mouse.x > 0) {
+        mouse.isVisible = true;
+        cursorDot.style.opacity = "1";
+        cursorRing.style.opacity = "1";
+      }
+    });
+
+    // Crimson water ripple generation (compact)
+    function addWakeRipple(x, y, power = 1) {
+      ripples.push({
+        x, y,
+        radius: 2,
+        maxRadius: Math.min(38, 16 + power * 10),
+        opacity: Math.min(0.55, 0.22 + power * 0.12),
+        speed: 1.1 + power * 0.45,
+        r: 255, g: 42, b: 95
+      });
+    }
+
+    // High energy crimson water splash & droplets
+    function addWaterSplash(x, y) {
+      // Primary crystal shockwave
+      ripples.push({
+        x, y,
+        radius: 3,
+        maxRadius: 52,
+        opacity: 0.8,
+        speed: 2.8,
+        r: 255, g: 255, b: 255
+      });
+      // Crimson liquid wave
+      setTimeout(() => {
+        ripples.push({
+          x, y,
+          radius: 2,
+          maxRadius: 42,
+          opacity: 0.65,
+          speed: 2.0,
+          r: 255, g: 42, b: 95
+        });
+      }, 60);
+      // Ruby trailing ring
+      setTimeout(() => {
+        ripples.push({
+          x, y,
+          radius: 2,
+          maxRadius: 30,
+          opacity: 0.45,
+          speed: 1.5,
+          r: 255, g: 75, b: 120
+        });
+      }, 120);
+
+      // Compact splash droplets
+      const count = 10;
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 / count) * i + (Math.random() - 0.5) * 0.5;
+        const spd = 1.8 + Math.random() * 3.0;
+        droplets.push({
+          x, y,
+          vx: Math.cos(angle) * spd,
+          vy: Math.sin(angle) * spd,
+          radius: 1.0 + Math.random() * 1.2,
+          alpha: 0.9,
+          decay: 0.022 + Math.random() * 0.015
+        });
+      }
+    }
+
+    // Spawn subtle red spray bead when moving fast
+    function addSprayBead(x, y, vx, vy) {
+      const spread = 0.8;
+      const angle = Math.atan2(vy, vx) + Math.PI + (Math.random() - 0.5) * spread;
+      const spd = Math.random() * 1.8;
+      droplets.push({
+        x: x + (Math.random() - 0.5) * 5,
+        y: y + (Math.random() - 0.5) * 5,
+        vx: Math.cos(angle) * spd,
+        vy: Math.sin(angle) * spd,
+        radius: 0.8 + Math.random() * 0.9,
+        alpha: 0.6,
+        decay: 0.028 + Math.random() * 0.02
+      });
+    }
+
+    let waveClock = 0;
+
+    function renderWaterWays() {
+      waveClock += 0.08;
+
+      // Smooth cursor positions
+      mouse.x += (mouse.targetX - mouse.x) * 0.8;
+      mouse.y += (mouse.targetY - mouse.y) * 0.8;
+
+      // Ring smooth-lag
+      ringPos.x += (mouse.targetX - ringPos.x) * 0.24;
+      ringPos.y += (mouse.targetY - ringPos.y) * 0.24;
+
+      // Update DOM cursor elements
+      if (mouse.isVisible) {
+        cursorDot.style.left = `${mouse.x}px`;
+        cursorDot.style.top = `${mouse.y}px`;
+        cursorRing.style.left = `${ringPos.x}px`;
+        cursorRing.style.top = `${ringPos.y}px`;
+      }
+
+      // Compute velocity
+      velocity.x = mouse.x - prevMouse.x;
+      velocity.y = mouse.y - prevMouse.y;
+      velocity.speed = Math.hypot(velocity.x, velocity.y);
+      prevMouse.x = mouse.x;
+      prevMouse.y = mouse.y;
+
+      // Append point to water trail
+      if (mouse.isVisible) {
+        trail.unshift({
+          x: mouse.x,
+          y: mouse.y,
+          vx: velocity.x,
+          vy: velocity.y,
+          speed: velocity.speed,
+          age: 0,
+          phase: waveClock
+        });
+
+        // Fast flick droplet spray
+        if (velocity.speed > 16 && Math.random() > 0.45) {
+          addSprayBead(mouse.x, mouse.y, velocity.x, velocity.y);
+        }
+
+        // Distance-based water wake ripple
+        distSinceLastRipple += velocity.speed;
+        const now = Date.now();
+        if ((distSinceLastRipple > 28 || now - lastWakeDropTime > 130) && velocity.speed > 1.4) {
+          addWakeRipple(mouse.x, mouse.y, Math.min(2.0, velocity.speed / 8));
+          distSinceLastRipple = 0;
+          lastWakeDropTime = now;
+        }
+      }
+
+      if (trail.length > MAX_TRAIL_LENGTH) {
+        trail.pop();
+      }
+
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // ----------------------------------------------------
+      // 1. RENDER EXPANDING CRIMSON WATER RIPPLES
+      // ----------------------------------------------------
+      for (let i = 0; i < ripples.length; i++) {
+        const r = ripples[i];
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(${r.r}, ${r.g}, ${r.b}, ${r.opacity})`;
+        ctx.lineWidth = Math.max(0.8, 1.4 * (r.opacity / 0.6));
+        ctx.stroke();
+
+        // Inner refracted water ring
+        if (r.radius > 7) {
+          ctx.beginPath();
+          ctx.arc(r.x, r.y, r.radius * 0.7, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(255, 200, 220, ${r.opacity * 0.35})`;
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        r.radius += r.speed;
+        r.opacity -= 0.015;
+
+        if (r.opacity <= 0 || r.radius >= r.maxRadius) {
+          ripples.splice(i, 1);
+          i--;
+        }
+      }
+
+      // ----------------------------------------------------
+      // 2. RENDER THE "WATER WAYS" FLUID STREAM (SLEEK RED)
+      // ----------------------------------------------------
+      if (trail.length > 2) {
+        // Age trail points
+        for (let i = 0; i < trail.length; i++) {
+          trail[i].age++;
+        }
+
+        // Pass 1: Compact Soft Crimson Glow
+        ctx.save();
+        ctx.beginPath();
+        for (let i = 0; i < trail.length - 1; i++) {
+          const p1 = trail[i];
+          const p2 = trail[i + 1];
+          const midX = (p1.x + p2.x) / 2;
+          const midY = (p1.y + p2.y) / 2;
+          if (i === 0) ctx.moveTo(p1.x, p1.y);
+          ctx.quadraticCurveTo(p1.x, p1.y, midX, midY);
+        }
+        const glowGrad = ctx.createLinearGradient(
+          trail[0].x, trail[0].y,
+          trail[trail.length - 1].x, trail[trail.length - 1].y
+        );
+        glowGrad.addColorStop(0, "rgba(255, 42, 95, 0.45)");
+        glowGrad.addColorStop(0.5, "rgba(255, 75, 120, 0.22)");
+        glowGrad.addColorStop(1, "rgba(255, 42, 95, 0)");
+
+        ctx.strokeStyle = glowGrad;
+        ctx.lineWidth = 7;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.stroke();
+        ctx.restore();
+
+        // Pass 2: Sleek Liquid Crimson Ribbon with Micro Wave Oscillations
+        for (let i = 0; i < trail.length - 1; i++) {
+          const pt = trail[i];
+          const nextPt = trail[i + 1];
+
+          const progress = i / trail.length; // 0 (head) to 1 (tail)
+          const life = 1 - progress;
+
+          // Subtle organic water wave oscillation
+          const waveAmp = Math.min(2.4, (1 - progress) * 2.0);
+          const waveOffset = Math.sin(waveClock * 2.6 - i * 0.45) * waveAmp;
+
+          // Perpendicular normal vector for ribbon width
+          const dx = nextPt.x - pt.x;
+          const dy = nextPt.y - pt.y;
+          const dist = Math.hypot(dx, dy) || 1;
+          const nx = -dy / dist;
+          const ny = dx / dist;
+
+          const width = Math.max(0.8, (3.6 * life) + (pt.speed > 5 ? 0.8 : 0));
+
+          const curX = pt.x + nx * waveOffset;
+          const curY = pt.y + ny * waveOffset;
+          const targetX = nextPt.x + nx * waveOffset;
+          const targetY = nextPt.y + ny * waveOffset;
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(curX, curY);
+          ctx.lineTo(targetX, targetY);
+
+          // Crimson gradient matching --primary: #ff2a5f
+          let r = 255, g, b;
+          if (progress < 0.3) {
+            // Bright white-rose tip
+            const t = progress / 0.3;
+            g = Math.round(180 * (1 - t) + 42 * t);
+            b = Math.round(200 * (1 - t) + 95 * t);
+          } else {
+            // Rich crimson tapering into deep scarlet
+            const t = (progress - 0.3) / 0.7;
+            r = Math.round(255 * (1 - t) + 180 * t);
+            g = Math.round(42 * (1 - t) + 20 * t);
+            b = Math.round(95 * (1 - t) + 40 * t);
+          }
+
+          const alpha = life * 0.75;
+          ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+          ctx.lineWidth = width;
+          ctx.lineCap = "round";
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Pass 3: Fine Crystal Specular Sheen Spine
+        ctx.save();
+        ctx.beginPath();
+        for (let i = 0; i < Math.min(12, trail.length - 1); i++) {
+          const p1 = trail[i];
+          const p2 = trail[i + 1];
+          const midX = (p1.x + p2.x) / 2;
+          const midY = (p1.y + p2.y) / 2;
+          if (i === 0) ctx.moveTo(p1.x, p1.y);
+          ctx.quadraticCurveTo(p1.x, p1.y, midX, midY);
+        }
+        ctx.strokeStyle = "rgba(255, 235, 242, 0.85)";
+        ctx.lineWidth = 1.0;
+        ctx.lineCap = "round";
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // ----------------------------------------------------
+      // 3. RENDER CRIMSON WATER DROPLETS
+      // ----------------------------------------------------
+      for (let j = 0; j < droplets.length; j++) {
+        const d = droplets[j];
+        d.x += d.vx;
+        d.y += d.vy;
+        d.vx *= 0.93;
+        d.vy *= 0.93;
+        d.alpha -= d.decay;
+
+        if (d.alpha <= 0) {
+          droplets.splice(j, 1);
+          j--;
+          continue;
+        }
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 42, 95, ${d.alpha * 0.85})`;
+        ctx.strokeStyle = `rgba(255, 180, 205, ${d.alpha})`;
+        ctx.fill();
+        ctx.lineWidth = 0.6;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      requestAnimationFrame(renderWaterWays);
+    }
+    renderWaterWays();
+  </script>
+</body>
+
+</html>
